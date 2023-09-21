@@ -1,0 +1,144 @@
+---
+title: "data_manipulation"
+output: html_document
+date: "2023-09-21"
+---
+
+```{r}
+library(tidyverse)
+```
+
+Impprt FAS litters and pups
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv")
+litters_df = janitor::clean_names(litters_df)
+
+pups_df = 
+  read_csv("data/FAS_pups.csv")
+pups_df = janitor::clean_names(pups_df)
+```
+
+## select
+
+`select` is used to select columns
+
+```{r}
+select(litters_df, group, litter_number, gd0_weight)
+
+select(litters_df, gd0_weight, group)
+
+select(litters_df, group, starts_with("pups"))
+
+select(litters_df, -litter_number)
+
+select(litters_df, -starts_with("GD"))
+
+select(litters_df, group, litter_id = litter_number)
+
+select(litters_df, group, litter_id = litter_number, everything())
+```
+
+```{r}
+rename(litters_df, litter_id = litter_number)
+
+relocate(litters_df, litter_number)
+```
+
+# learning assessment 1: in the pups dataset, select the columns containing litter_number, sex, pd_ears
+
+```{r}
+select(pups_df, litter_number, sex, pd_ears)
+```
+
+`select` vs `pull`
+
+```{r}
+select(litters_df, group)
+pull(litters_df, group)
+```
+## `filter`
+
+get rid of rows using `filter()`
+
+```{r}
+filter(litters_df, group == "Con7")
+
+filter(litters_df, group == "Mod8")
+
+filter(litters_df, group != "Mod8")
+
+filter(litters_df, gd0_weight > 20)
+
+filter(litters_df, gd0_weight <= 20)
+
+filter(litters_df, group == "Con7" | group == "Con8")
+
+filter(litters_df, group %in% c("Con7", "Con8"))
+
+filter(litters_df, (!group == "Con7"))
+
+filter(litters_df, group %in% c("Con7", "Con8"), gd0_weight > 20)
+```
+
+# learning assessment 2 - go back!!! 
+
+```{r}
+
+
+
+
+
+```
+
+## `mutate` 
+
+this is used to add or change variables to the dataframe (see by `view()` in the console)
+
+```{r}
+mutate(litters_df, wt_gain = gd18_weight - gd0_weight)
+
+mutate(litters_df, group = str_to_lower(group))
+
+mutate(
+  litters_df, 
+  wt_gain = gd18_weight - gd0_weight,
+  group = str_to_lower(group)
+)
+```
+
+to remove missing values or "NAs": 
+
+```{r}
+drop_na(litters_df)
+drop_na(litters_df, gd0_weight)
+```
+
+## `arrange`
+
+
+```{r}
+arrange(litters_df, gd0_weight)
+
+arrange(litters_df, group, gd0_weight)
+
+
+
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
