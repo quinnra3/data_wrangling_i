@@ -8,7 +8,7 @@ date: "2023-09-21"
 library(tidyverse)
 ```
 
-Impprt FAS litters and pups
+Import FAS litters and pups
 
 ```{r}
 litters_df = 
@@ -108,7 +108,7 @@ mutate(
 )
 ```
 
-to remove missing values or "NAs": 
+## to remove missing values or "NAs", `drop_na`: 
 
 ```{r}
 drop_na(litters_df)
@@ -122,11 +122,24 @@ drop_na(litters_df, gd0_weight)
 arrange(litters_df, gd0_weight)
 
 arrange(litters_df, group, gd0_weight)
+```
 
+## pipes
 
-
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv") |> 
+  janitor::clean_names() |> 
+  select(-starts_with("pups")) |>
+  mutate(
+    group = str_to_lower(group),
+    wt_gain = gd18_weight - gd0_weight,
+  ) |> 
+  drop_na(wt_gain) |> 
+  arrange(group, wt_gain)
 
 ```
+To run the code for `litters_df`, run lines 131 - 139. To save the code into `litters_df`, run lines 130 - 139 (include `litters_df=`). View saved, new, `litters_df` in console by: `view(litters_df)` after running lines 130-139. 
 
 
 

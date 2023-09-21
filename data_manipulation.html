@@ -838,6 +838,32 @@ containing litter_number, sex, pd_ears</h1>
 ## # ℹ 39 more rows
 ## # ℹ 2 more variables: pups_dead_at_birth &lt;dbl&gt;, pups_survive &lt;dbl&gt;</code></pre>
 </div>
+<div id="pipes" class="section level2">
+<h2>pipes</h2>
+<pre class="r"><code>litters_df = 
+  read_csv(&quot;data/FAS_litters.csv&quot;) |&gt; 
+  janitor::clean_names() |&gt; 
+  select(-starts_with(&quot;pups&quot;)) |&gt;
+  mutate(
+    group = str_to_lower(group),
+    wt_gain = gd18_weight - gd0_weight,
+  ) |&gt; 
+  drop_na(wt_gain) |&gt; 
+  arrange(group, wt_gain)</code></pre>
+<pre><code>## Rows: 49 Columns: 8
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): group, litter_number
+## dbl (6): gd0_weight, gd18_weight, gd_of_birth, pups_born_alive, pups_dead_at...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<p>To run the code for <code>litters_df</code>, run lines 131 - 139. To
+save the code into <code>litters_df</code>, run lines 130 - 139 (include
+<code>litters_df=</code>). View saved, new, <code>litters_df</code> in
+console by: <code>view(litters_df)</code> after running lines
+130-139.</p>
+</div>
 </div>
 
 
