@@ -397,6 +397,123 @@ pulse_df</code></pre>
 ## 10 10022  58.5 male  01m           3
 ## # ℹ 4,338 more rows</code></pre>
 </div>
+<div id="learning-assessment-1-in-the-litters-data-the-variables-gd0_weight-and-gd18_weight-give-the-weight-of-the-mother-mouse-on-gestational-days-0-and-18.-write-a-data-cleaning-chain-that-retains-only-litter_number-and-these-columns-produces-new-variables-gd-and-weight-and-makes-gd-a-numeric-variable-taking-values-0-and-18-for-the-last-part-you-might-want-to-use-recode-.-is-this-version-tidy" class="section level1">
+<h1>Learning Assessment 1: In the litters data, the variables gd0_weight
+and gd18_weight give the weight of the mother mouse on gestational days
+0 and 18. Write a data cleaning chain that retains only litter_number
+and these columns; produces new variables gd and weight; and makes gd a
+numeric variable taking values 0 and 18 (for the last part, you might
+want to use recode …). Is this version “tidy”?</h1>
+<pre class="r"><code>litters_df = 
+  read_csv(&quot;data/FAS_litters.csv&quot;) |&gt; 
+  janitor::clean_names() |&gt; 
+  select(litter_number, gd0_weight, gd18_weight) |&gt; 
+  pivot_longer(
+    gd0_weight:gd18_weight,
+    names_to = &quot;gd&quot;,
+    values_to = &quot;weight&quot;,
+    names_prefix = &quot;gd&quot;
+  ) |&gt; 
+    mutate(
+      gd = case_match(
+        gd,
+        &quot;0_weight&quot;  ~ 0,
+        &quot;18_weight&quot; ~ 18,
+      ))</code></pre>
+<pre><code>## Rows: 49 Columns: 8
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (2): group, litter_number
+## dbl (6): gd0_weight, gd18_weight, gd_of_birth, pups_born_alive, pups_dead_at...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>litters_df</code></pre>
+<pre><code>## # A tibble: 98 × 3
+##    litter_number    gd weight
+##    &lt;chr&gt;         &lt;dbl&gt;  &lt;dbl&gt;
+##  1 #85               0   19.7
+##  2 #85              18   34.7
+##  3 #1/2/95/2         0   27  
+##  4 #1/2/95/2        18   42  
+##  5 #5/5/3/83/3-3     0   26  
+##  6 #5/5/3/83/3-3    18   41.4
+##  7 #5/4/2/95/2       0   28.5
+##  8 #5/4/2/95/2      18   44.1
+##  9 #4/2/95/3-3       0   NA  
+## 10 #4/2/95/3-3      18   NA  
+## # ℹ 88 more rows</code></pre>
+<p>??? ^Error: object ‘litter_number’ not found ??? &lt;- fixed by
+re-saving the excel file and redoing code</p>
+<div id="lotr-words-data" class="section level2">
+<h2>LOTR words data</h2>
+<p>Import LOTR words data</p>
+<pre class="r"><code>fellowship_df = 
+  readxl::read_excel(&quot;data/LotR_Words.xlsx&quot;, range = &quot;B3:D6&quot;) |&gt; 
+  mutate(movie = &quot;fellowship&quot;)
+
+fellowship_df</code></pre>
+<pre><code>## # A tibble: 3 × 4
+##   Race   Female  Male movie     
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     
+## 1 Elf      1229   971 fellowship
+## 2 Hobbit     14  3644 fellowship
+## 3 Man         0  1995 fellowship</code></pre>
+<pre class="r"><code>two_towers_df = 
+  readxl::read_excel(&quot;data/LotR_Words.xlsx&quot;, range = &quot;F3:H6&quot;) |&gt; 
+  mutate(movie = &quot;two towers&quot;)
+
+two_towers_df</code></pre>
+<pre><code>## # A tibble: 3 × 4
+##   Race   Female  Male movie     
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;     
+## 1 Elf       331   513 two towers
+## 2 Hobbit      0  2463 two towers
+## 3 Man       401  3589 two towers</code></pre>
+<pre class="r"><code>return_of_the_king_df = 
+  readxl::read_excel(&quot;data/LotR_Words.xlsx&quot;, range = &quot;J3:L6&quot;) |&gt; 
+  mutate(movie = &quot;return of the king&quot;)
+
+return_of_the_king_df</code></pre>
+<pre><code>## # A tibble: 3 × 4
+##   Race   Female  Male movie             
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;             
+## 1 Elf       183   510 return of the king
+## 2 Hobbit      2  2673 return of the king
+## 3 Man       268  2459 return of the king</code></pre>
+<pre class="r"><code>lotr_df = 
+  bind_rows(fellowship_df, two_towers_df, return_of_the_king_df) |&gt; 
+  janitor::clean_names() |&gt; 
+  pivot_longer(
+    male:female,
+    names_to = &quot;gender&quot;,
+    values_to = &quot;word&quot;) |&gt; 
+  relocate(movie)
+
+lotr_df</code></pre>
+<pre><code>## # A tibble: 18 × 4
+##    movie              race   gender  word
+##    &lt;chr&gt;              &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt;
+##  1 fellowship         Elf    male     971
+##  2 fellowship         Elf    female  1229
+##  3 fellowship         Hobbit male    3644
+##  4 fellowship         Hobbit female    14
+##  5 fellowship         Man    male    1995
+##  6 fellowship         Man    female     0
+##  7 two towers         Elf    male     513
+##  8 two towers         Elf    female   331
+##  9 two towers         Hobbit male    2463
+## 10 two towers         Hobbit female     0
+## 11 two towers         Man    male    3589
+## 12 two towers         Man    female   401
+## 13 return of the king Elf    male     510
+## 14 return of the king Elf    female   183
+## 15 return of the king Hobbit male    2673
+## 16 return of the king Hobbit female     2
+## 17 return of the king Man    male    2459
+## 18 return of the king Man    female   268</code></pre>
+</div>
+</div>
 
 
 
