@@ -1,0 +1,10 @@
+---
+title: "tidy_data"
+output: html_document
+date: "2023-09-21"
+---
+
+```{r}
+library(tidyverse)
+```
+
